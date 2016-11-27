@@ -1,6 +1,8 @@
 from math import sqrt, acos, pi
 from decimal import Decimal, getcontext
 
+from util import clip
+
 getcontext().prec = 30
 
 
@@ -52,7 +54,7 @@ class Vector:
         try:
             u1 = self.normalized()
             u2 = v.normalized()
-            angle_in_radians = Decimal(acos(u1.dot(u2)))
+            angle_in_radians = Decimal(acos(clip(u1.dot(u2), 1.0, -1.0)))
 
             if in_degrees:
                 degrees_per_radian = Decimal('180.0') / Decimal(pi)
@@ -65,6 +67,18 @@ class Vector:
                 raise Exception(self.CANNOT_COMPUTE_ANGLE_WITH_ZERO_VECTOR_MSG)
             else:
                 raise e
+
+    def is_orthogonal_with(self, v, tolerance=1e-10):
+        return abs(self.dot(v)) < tolerance
+
+    def is_parallel_with(self, v):
+        return (self.is_zero() or
+                v.is_zero() or
+                self.angle_with(v) == 0 or
+                self.angle_with(v) == pi)
+
+    def is_zero(self, tolerance=1e-10):
+        return self.magnitude() < tolerance
 
     def __str__(self):
         return 'Vector: {}'.format(self.coordinates)
