@@ -93,10 +93,10 @@ class Vector:
             else:
                 raise e
 
-    def is_orthogonal_with(self, v, tolerance=1e-10):
+    def is_orthogonal_to(self, v, tolerance=1e-10):
         return abs(self.dot(v)) < tolerance
 
-    def is_parallel_with(self, v):
+    def is_parallel_to(self, v):
         return (self.is_zero() or
                 v.is_zero() or
                 self.angle_with(v) == 0 or
@@ -138,3 +138,9 @@ class Vector:
 
     def __eq__(self, v):
         return self.coordinates == v.coordinates
+
+    def __iter__(self):
+        return self.coordinates.__iter__()
+
+    def __getitem__(self, item):
+        return self.coordinates[item]
