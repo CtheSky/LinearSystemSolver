@@ -137,7 +137,12 @@ class Vector:
         return 'Vector: {}'.format(self.coordinates)
 
     def __eq__(self, v):
-        return self.coordinates == v.coordinates
+        if not isinstance(v, Vector):
+            return False
+        for x, y in zip(self.coordinates, v.coordinates):
+            if x.quantize(Decimal('.0000001')) != y.quantize(Decimal('.0000001')):
+                return False
+        return True
 
     def __iter__(self):
         return self.coordinates.__iter__()
