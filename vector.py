@@ -140,7 +140,7 @@ class Vector:
         if not isinstance(v, Vector):
             return False
         for x, y in zip(self.coordinates, v.coordinates):
-            if x.quantize(Decimal('.0000001')) != y.quantize(Decimal('.0000001')):
+            if x.quantize(Decimal('.001')) != y.quantize(Decimal('.001')):
                 return False
         return True
 
