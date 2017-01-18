@@ -47,13 +47,22 @@ class Line(object):
 
         return n1.is_parallel_to(n2)
 
-    def __eq__(self, other):
+    def __eq__(self, ell):
 
-        if not self.is_parallel_to(other):
+        if self.normal_vector.is_zero():
+            if not ell.normal_vector.is_zero():
+                return False
+            else:
+                diff = self.constant_term - ell.constant_term
+                return MyDecimal(diff).is_near_zero()
+        elif ell.normal_vector.is_zero():
+            return False
+
+        if not self.is_parallel_to(ell):
             return False
 
         x0 = self.basepoint
-        y0 = self.basepoint
+        y0 = ell.basepoint
         basepoint_difference = x0.minus(y0)
 
         n = self.normal_vector
