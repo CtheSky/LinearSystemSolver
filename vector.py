@@ -93,14 +93,14 @@ class Vector:
             else:
                 raise e
 
-    def is_orthogonal_to(self, v, tolerance=1e-10):
+    def is_orthogonal_to(self, v, tolerance=1e-6):
         return abs(self.dot(v)) < tolerance
 
-    def is_parallel_to(self, v):
+    def is_parallel_to(self, v, tolerance=1e-6):
         return (self.is_zero() or
                 v.is_zero() or
-                self.angle_with(v) == 0 or
-                self.angle_with(v) == pi)
+                abs(self.angle_with(v) - Decimal('0')) < tolerance or
+                abs(self.angle_with(v) - Decimal(pi)) < tolerance)
 
     def is_zero(self, tolerance=1e-10):
         return self.magnitude() < tolerance
