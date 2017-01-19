@@ -36,3 +36,16 @@ class LineTest(unittest.TestCase):
         l = Line(Vector([0]), 0)
         el = Line(Vector([0]), 1)
         self.assertNotEqual(l, el)
+
+    def test_intersection_with(self):
+        # return None for parallel lines
+        l = Line(Vector([2, 3]), 0)
+        el = Line(Vector([4, 6]), 1)
+        self.assertIsNone(l.intersection_with(el))
+
+        l = Line(Vector([7.204, 3.182]), 8.68)
+        el = Line(Vector([8.172, 4.114]), 9.883)
+        self.assertEqual(l.intersection_with(el), Vector([1.173, 0.073]))
+
+        # return line for same lines
+        self.assertTrue(l.intersection_with(l) == l)
