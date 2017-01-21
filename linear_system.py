@@ -1,7 +1,6 @@
 from decimal import Decimal, getcontext
 from copy import deepcopy
 
-from vector import Vector
 from plane import Plane
 
 getcontext().prec = 30
@@ -91,6 +90,34 @@ class LinearSystem(object):
                                                      row_to_be_added_to=j)
         return system
 
+    def compute_rref(self):
+        tf = self.compute_triangular_form()
+
+        num_equations = len(tf)
+        pivot_indices = tf.indices_of_first_nonzero_terms_in_each_row()
+
+        for i in range(num_equations)[::-1]:
+            col = pivot_indices[i]
+            if col < 0:
+                continue
+
+            # scale to make coefficient equal 1
+            n = tf[i].normal_vector
+            times = Decimal('1.0') / n[col]
+            tf.multiply_coefficient_and_row(times, i)
+
+            # clear coefficient above
+            for j in range(i):
+                c1 = tf[i].normal_vector[col]
+                c2 = tf[j].normal_vector[col]
+
+                coefficient = -c2 / c1
+                tf.add_multiple_times_row_to_row(coefficient=coefficient,
+                                                 row_to_add=i,
+                                                 row_to_be_added_to=j)
+
+        return tf
+
     def __len__(self):
         return len(self.planes)
 
@@ -115,5 +142,3 @@ class LinearSystem(object):
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
-
-
