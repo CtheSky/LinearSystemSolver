@@ -48,7 +48,7 @@ class LinearSystem(object):
         new_constant_term = (k1 * coefficient) + k2
 
         self[row_to_be_added_to] = Plane(normal_vector=new_normal_vector,
-                          constant_term=new_constant_term)
+                                         constant_term=new_constant_term)
 
     def indices_of_first_nonzero_terms_in_each_row(self):
         num_equations = len(self)
@@ -66,6 +66,30 @@ class LinearSystem(object):
                     raise e
 
         return indices
+
+    def compute_triangular_form(self):
+        system = deepcopy(self)
+        num_equations = len(system)
+
+        for i in range(num_equations):
+            # check whether coefficient is zero, when it is, swap with a row below with none zero coefficient
+            indices = system.indices_of_first_nonzero_terms_in_each_row()
+            if indices[i] != i:
+                for j in range(i + 1, num_equations):
+                    if indices[j] == i:
+                        system.swap_rows(i, j)
+                        break
+
+            # eliminate the coefficient in column i underneath row i
+            for j in range(i + 1, num_equations):
+                c1 = system[i].normal_vector[i]
+                c2 = system[j].normal_vector[i]
+
+                coefficient = -c2 / c1
+                system.add_multiple_times_row_to_row(coefficient=coefficient,
+                                                     row_to_add=i,
+                                                     row_to_be_added_to=j)
+        return system
 
     def __len__(self):
         return len(self.planes)
@@ -91,3 +115,5 @@ class LinearSystem(object):
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
+
+
