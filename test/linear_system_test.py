@@ -7,7 +7,7 @@ from linear_system import LinearSystem
 
 class LinearSystemTest(unittest.TestCase):
 
-    def test_is_parallel_to(self):
+    def test_row_operations(self):
         p0 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
         p1 = Plane(normal_vector=Vector(['0', '1', '0']), constant_term='2')
         p2 = Plane(normal_vector=Vector(['1', '1', '-1']), constant_term='3')
@@ -56,3 +56,38 @@ class LinearSystemTest(unittest.TestCase):
                         s[1] == Plane(normal_vector=Vector(['10', '11', '10']), constant_term='12') and
                         s[2] == Plane(normal_vector=Vector(['-1', '-1', '1']), constant_term='-3') and
                         s[3] == p3)
+
+    def test_compute_triangular_form(self):
+        p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+        p2 = Plane(normal_vector=Vector(['0', '1', '1']), constant_term='2')
+        s = LinearSystem([p1, p2])
+        t = s.compute_triangular_form()
+        self.assertTrue(t[0] == p1 and
+                        t[1] == p2)
+
+        p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+        p2 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='2')
+        s = LinearSystem([p1, p2])
+        t = s.compute_triangular_form()
+        self.assertTrue(t[0] == p1 and
+                        t[1] == Plane(constant_term='1'))
+
+        p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+        p2 = Plane(normal_vector=Vector(['0', '1', '0']), constant_term='2')
+        p3 = Plane(normal_vector=Vector(['1', '1', '-1']), constant_term='3')
+        p4 = Plane(normal_vector=Vector(['1', '0', '-2']), constant_term='2')
+        s = LinearSystem([p1, p2, p3, p4])
+        t = s.compute_triangular_form()
+        self.assertTrue(t[0] == p1 and
+                        t[1] == p2 and
+                        t[2] == Plane(normal_vector=Vector(['0', '0', '-2']), constant_term='2') and
+                        t[3] == Plane())
+
+        p1 = Plane(normal_vector=Vector(['0', '1', '1']), constant_term='1')
+        p2 = Plane(normal_vector=Vector(['1', '-1', '1']), constant_term='2')
+        p3 = Plane(normal_vector=Vector(['1', '2', '-5']), constant_term='3')
+        s = LinearSystem([p1, p2, p3])
+        t = s.compute_triangular_form()
+        self.assertTrue(t[0] == Plane(normal_vector=Vector(['1', '-1', '1']), constant_term='2') and
+                        t[1] == Plane(normal_vector=Vector(['0', '1', '1']), constant_term='1') and
+                        t[2] == Plane(normal_vector=Vector(['0', '0', '-9']), constant_term='-2'))
