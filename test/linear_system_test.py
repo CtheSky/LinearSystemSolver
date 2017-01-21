@@ -1,8 +1,11 @@
 from __future__ import absolute_import
-import unittest
+from decimal import Decimal
+
 from vector import Vector
 from plane import Plane
 from linear_system import LinearSystem
+
+import unittest
 
 
 class LinearSystemTest(unittest.TestCase):
@@ -91,3 +94,40 @@ class LinearSystemTest(unittest.TestCase):
         self.assertTrue(t[0] == Plane(normal_vector=Vector(['1', '-1', '1']), constant_term='2') and
                         t[1] == Plane(normal_vector=Vector(['0', '1', '1']), constant_term='1') and
                         t[2] == Plane(normal_vector=Vector(['0', '0', '-9']), constant_term='-2'))
+
+    def test_rref(self):
+        p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+        p2 = Plane(normal_vector=Vector(['0', '1', '1']), constant_term='2')
+        s = LinearSystem([p1, p2])
+        r = s.compute_rref()
+        self.assertTrue(r[0] == Plane(normal_vector=Vector(['1', '0', '0']), constant_term='-1') and
+                        r[1] == p2)
+
+        p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+        p2 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='2')
+        s = LinearSystem([p1, p2])
+        r = s.compute_rref()
+        self.assertTrue(r[0] == p1 and
+                        r[1] == Plane(constant_term='1'))
+
+        p1 = Plane(normal_vector=Vector(['1', '1', '1']), constant_term='1')
+        p2 = Plane(normal_vector=Vector(['0', '1', '0']), constant_term='2')
+        p3 = Plane(normal_vector=Vector(['1', '1', '-1']), constant_term='3')
+        p4 = Plane(normal_vector=Vector(['1', '0', '-2']), constant_term='2')
+        s = LinearSystem([p1, p2, p3, p4])
+        r = s.compute_rref()
+        self.assertTrue(r[0] == Plane(normal_vector=Vector(['1', '0', '0']), constant_term='0') and
+                        r[1] == p2 and
+                        r[2] == Plane(normal_vector=Vector(['0', '0', '-2']), constant_term='2') and
+                        r[3] == Plane())
+
+        p1 = Plane(normal_vector=Vector(['0', '1', '1']), constant_term='1')
+        p2 = Plane(normal_vector=Vector(['1', '-1', '1']), constant_term='2')
+        p3 = Plane(normal_vector=Vector(['1', '2', '-5']), constant_term='3')
+        s = LinearSystem([p1, p2, p3])
+        r = s.compute_rref()
+        self.assertTrue(r[0] == Plane(normal_vector=Vector(['1', '0', '0']), constant_term=Decimal('23') / Decimal('9')) and
+                        r[1] == Plane(normal_vector=Vector(['0', '1', '0']),
+                                      constant_term=Decimal('7') / Decimal('9')) and
+                        r[2] == Plane(normal_vector=Vector(['0', '0', '1']),
+                                      constant_term=Decimal('2') / Decimal('9')))
