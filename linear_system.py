@@ -4,6 +4,7 @@ from copy import deepcopy
 from vector import Vector
 from plane import Plane
 from parametrization import Parametrization
+from util import MyDecimal
 
 getcontext().prec = 30
 
@@ -207,7 +208,3 @@ class LinearSystem(object):
         ret += '\n'.join(temp)
         return ret
 
-
-class MyDecimal(Decimal):
-    def is_near_zero(self, eps=1e-10):
-        return abs(self) < eps
