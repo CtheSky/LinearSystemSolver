@@ -8,7 +8,14 @@ from linear_system import LinearSystem
 import unittest
 
 
-class LinearSystemTest(unittest.TestCase):
+class LinearSystemWithHyperplaneTest(unittest.TestCase):
+
+    def runTest(self):
+        self.test_row_operations()
+        self.test_compute_triangular_form()
+        self.test_rref()
+        self.test_compute_solution()
+        self.test_parametrization()
 
     def test_row_operations(self):
         p0 = Hyperplane(normal_vector=Vector(['1', '1', '1']), constant_term='1')

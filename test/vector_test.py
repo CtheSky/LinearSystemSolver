@@ -6,6 +6,24 @@ from decimal import Decimal
 
 class VectorTest(unittest.TestCase):
 
+    def runTest(self):
+        self.test_initialize()
+        self.test_magnitude()
+        self.test_normalized()
+        self.test_plus()
+        self.test_minus()
+        self.test_times_scalar()
+        self.test_dot()
+        self.test_angle_with()
+        self.test_is_parallel_to()
+        self.test_is_orthogonal_to()
+        self.test_component_parallel_to()
+        self.test_component_orthogonal_to()
+        self.test_projection()
+        self.test_cross_product()
+        self.test_area_of_parallelogram_with()
+        self.test_area_of_triangle_with()
+
     def test_initialize(self):
         # test basic initialize
         coordinates = [1, 2, 3]

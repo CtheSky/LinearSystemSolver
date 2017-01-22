@@ -6,6 +6,11 @@ from line import Line
 
 class LineTest(unittest.TestCase):
 
+    def runTest(self):
+        self.test_equal()
+        self.test_is_parallel_to()
+        self.test_intersection_with()
+
     def test_is_parallel_to(self):
         l = Line(Vector([2, 3]), 0)
         el = Line(Vector([-4, -6]), 9)
@@ -49,3 +54,4 @@ class LineTest(unittest.TestCase):
 
         # return line for same lines
         self.assertTrue(l.intersection_with(l) == l)
+
