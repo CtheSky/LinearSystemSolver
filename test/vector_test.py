@@ -118,7 +118,7 @@ class VectorTest(unittest.TestCase):
 
         v = Vector([7.35, 0.221, 5.188])
         w = Vector([2.751, 8.259, 3.985])
-        self.assertEqual(round(v.angle_with(w), 3), 1.052)
+        self.assertEqual(round(v.angle_with(w, in_degrees=True), 3), 60.276)
 
     def test_is_parallel_to(self):
         v = Vector([1, 0])
