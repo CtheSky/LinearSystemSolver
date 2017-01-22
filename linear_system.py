@@ -3,6 +3,7 @@ from copy import deepcopy
 
 from vector import Vector
 from plane import Plane
+from parametrization import Parametrization
 
 getcontext().prec = 30
 
@@ -11,7 +12,6 @@ class LinearSystem(object):
 
     ALL_PLANES_MUST_BE_IN_SAME_DIM_MSG = 'All planes in the system should live in the same dimension'
     NO_SOLUTIONS_MSG = 'No solutions'
-    INF_SOLUTIONS_MSG = 'Infinitely many solutions'
 
     def __init__(self, planes):
         try:
@@ -121,25 +121,56 @@ class LinearSystem(object):
 
     def compute_solution(self):
         try:
-            return self.do_gaussian_elimination_and_extract_solution()
+            return self.do_gaussian_elimination_and_parametrize_solution()
 
         except Exception as e:
-            if (str(e) == self.NO_SOLUTIONS_MSG or
-                    str(e) == self.INF_SOLUTIONS_MSG):
+            if str(e) == self.NO_SOLUTIONS_MSG:
                 return str(e)
             else:
                 raise e
 
-    def do_gaussian_elimination_and_extract_solution(self):
+    def do_gaussian_elimination_and_parametrize_solution(self):
         rref = self.compute_rref()
 
         rref.raise_exception_if_contradictory_equation()
-        rref.raise_exception_if_too_few_pivots()
 
-        num_variables = rref.dimension
-        solution_coordinates = [rref[i].constant_term for i in range(num_variables)]
+        direction_vectors = rref.extract_direction_vectors_for_parametrization()
+        basepoint = rref.extract_basepoint_for_parametrization()
 
-        return Vector(solution_coordinates)
+        return Parametrization(basepoint=basepoint, direction_vectors=direction_vectors)
+
+    def extract_direction_vectors_for_parametrization(self):
+        num_variables = self.dimension
+        pivot_indices = self.indices_of_first_nonzero_terms_in_each_row()
+        free_variable_indices = set(range(num_variables)) - set(pivot_indices)
+
+        direction_vectors = []
+
+        for free_var in free_variable_indices:
+            vector_coords = [0] * num_variables
+            vector_coords[free_var] = 1
+            for i, p in enumerate(self.planes):
+                pivot_var = pivot_indices[i]
+                if pivot_var < 0:
+                    break
+                vector_coords[pivot_var] = -p.normal_vector[free_var]
+            direction_vectors.append(Vector(vector_coords))
+
+        return direction_vectors
+
+    def extract_basepoint_for_parametrization(self):
+        num_variables = self.dimension
+        pivot_indices = self.indices_of_first_nonzero_terms_in_each_row()
+
+        basepoint_coords = [0] * num_variables
+
+        for index, plane in enumerate(self.planes):
+            pivot_var = pivot_indices[index]
+            if pivot_var < 0:
+                break
+            basepoint_coords[pivot_var] = plane.constant_term
+
+        return Vector(basepoint_coords)
 
     def raise_exception_if_contradictory_equation(self):
         for p in self.planes:
@@ -155,14 +186,6 @@ class LinearSystem(object):
 
                 else:
                     raise e
-
-    def raise_exception_if_too_few_pivots(self):
-        pivot_indices = self.indices_of_first_nonzero_terms_in_each_row()
-        num_pivots = sum([1 if index >= 0 else 0 for index in pivot_indices])
-        num_variables = self.dimension
-
-        if num_pivots < num_variables:
-            raise Exception(self.INF_SOLUTIONS_MSG)
 
     def __len__(self):
         return len(self.planes)
