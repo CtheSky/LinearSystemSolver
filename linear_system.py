@@ -15,6 +15,14 @@ class LinearSystem(object):
     NO_SOLUTIONS_MSG = 'No solutions'
 
     def __init__(self, planes):
+        """Initialize LinearSystem object.
+
+        Args:
+            planes: linear equations to build linear system.
+
+        Raises:
+            Exception: thrown with msg 'All planes in the system should live in the same dimension'
+                       when planes are not in same dimension"""
         try:
             d = planes[0].dimension
             for p in planes:
@@ -27,9 +35,11 @@ class LinearSystem(object):
             raise Exception(self.ALL_PLANES_MUST_BE_IN_SAME_DIM_MSG)
 
     def swap_rows(self, row1, row2):
+        """Swap rows in equations."""
         self[row1], self[row2] = self[row2], self[row1]
 
     def multiply_coefficient_and_row(self, coefficient, row):
+        """Multiply a row with coefficient in equations."""
         n = self[row].normal_vector
         k = self[row].constant_term
 
@@ -40,6 +50,7 @@ class LinearSystem(object):
                           constant_term=new_constant_term)
 
     def add_multiple_times_row_to_row(self, coefficient, row_to_add, row_to_be_added_to):
+        """Multiply a row_to_add with coefficient and add it to row_to_be_added_to in equations."""
         n1 = self[row_to_add].normal_vector
         n2 = self[row_to_be_added_to].normal_vector
         k1 = self[row_to_add].constant_term
@@ -52,12 +63,13 @@ class LinearSystem(object):
                                          constant_term=new_constant_term)
 
     def indices_of_first_nonzero_terms_in_each_row(self):
+        """Returns indices of first nonzero terms in each row."""
         num_equations = len(self)
         num_variables = self.dimension
 
         indices = [-1] * num_equations
 
-        for i,p in enumerate(self.planes):
+        for i, p in enumerate(self.planes):
             try:
                 indices[i] = p.first_nonzero_index(p.normal_vector)
             except Exception as e:
@@ -69,6 +81,7 @@ class LinearSystem(object):
         return indices
 
     def compute_triangular_form(self):
+        """Returns triangular form of current linear system."""
         system = deepcopy(self)
         num_equations = len(system)
 
@@ -93,6 +106,7 @@ class LinearSystem(object):
         return system
 
     def compute_rref(self):
+        """Returns reduced row-echelon form of current linear system."""
         tf = self.compute_triangular_form()
 
         num_equations = len(tf)
@@ -121,6 +135,15 @@ class LinearSystem(object):
         return tf
 
     def compute_solution(self):
+        """Returns parametrized solution of current linear system.
+
+                Returns:
+                    One solution || Infinite solutions -> a parametrization object with parametrized solution
+                    No solution -> "No solutions"
+
+                Raises:
+                    Exception: inner Exception whose msg is not 'No solutions'
+                    """
         try:
             return self.do_gaussian_elimination_and_parametrize_solution()
 
@@ -131,6 +154,7 @@ class LinearSystem(object):
                 raise e
 
     def do_gaussian_elimination_and_parametrize_solution(self):
+        """Returns parametrized solution after gaussian elimination is done."""
         rref = self.compute_rref()
 
         rref.raise_exception_if_contradictory_equation()
@@ -141,6 +165,7 @@ class LinearSystem(object):
         return Parametrization(basepoint=basepoint, direction_vectors=direction_vectors)
 
     def extract_direction_vectors_for_parametrization(self):
+        """Returns direction vectors for parametrization."""
         num_variables = self.dimension
         pivot_indices = self.indices_of_first_nonzero_terms_in_each_row()
         free_variable_indices = set(range(num_variables)) - set(pivot_indices)
@@ -160,6 +185,7 @@ class LinearSystem(object):
         return direction_vectors
 
     def extract_basepoint_for_parametrization(self):
+        """Returns basepoint vector for parametrization."""
         num_variables = self.dimension
         pivot_indices = self.indices_of_first_nonzero_terms_in_each_row()
 
@@ -174,6 +200,7 @@ class LinearSystem(object):
         return Vector(basepoint_coords)
 
     def raise_exception_if_contradictory_equation(self):
+        """Raise exception with msg 'No solutions' when contradictory equation is found."""
         for p in self.planes:
             try:
                 p.first_nonzero_index(p.normal_vector)

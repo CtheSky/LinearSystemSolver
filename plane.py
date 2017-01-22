@@ -11,6 +11,13 @@ class Plane(object):
     NO_NONZERO_ELTS_FOUND_MSG = 'No nonzero elements found'
 
     def __init__(self, normal_vector=None, constant_term=None):
+        """Initialize line object.
+
+                Args:
+                    for a linear equation Ax + By + Cz = k
+                    normal_vector: [A, B, C], the vector orthogonal to direction vector.
+                    constant_term: k,constant appears at right side of linear equation.
+                    """
         self.dimension = 3
 
         if not normal_vector:
@@ -25,6 +32,15 @@ class Plane(object):
         self.set_basepoint()
 
     def set_basepoint(self):
+        """Compute and set base point of self.
+
+                Raises:
+                    Exception:
+                        if catch Exception with msg 'No nonzero elements found'
+                           set base point to None
+                        else
+                            Throws caught Exception
+                    """
         try:
             n = self.normal_vector
             c = self.constant_term
@@ -43,6 +59,7 @@ class Plane(object):
                 raise e
 
     def is_parallel_to(self, p):
+        """Returns whether self is parallel to p."""
         n1 = self.normal_vector
         n2 = p.normal_vector
 

@@ -5,7 +5,15 @@ class Parametrization(object):
         'dimension')
 
     def __init__(self, basepoint, direction_vectors):
+        """Initialize parametrization object.
 
+        Args:
+            basepoint: basepoint all solutions passed.
+            direction_vectors: direction vectors of free variables.
+
+        Raises:
+            Exception: thrown with msg 'The basepoint and direction vectors should all live in the same dimension'
+                       when basepoint vector and direction vectors are not in same dimension."""
         self.basepoint = basepoint
         self.direction_vectors = direction_vectors
         self.dimension = self.basepoint.dimension

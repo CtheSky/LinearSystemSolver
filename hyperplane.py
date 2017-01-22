@@ -1,12 +1,8 @@
 from decimal import Decimal, getcontext
 from vector import Vector
+from util import MyDecimal
 
 getcontext().prec = 30
-
-
-class MyDecimal(Decimal):
-    def is_near_zero(self, eps=1e-10):
-        return abs(self) < eps
 
 
 class Hyperplane(object):
@@ -17,6 +13,17 @@ class Hyperplane(object):
         'must be provided')
 
     def __init__(self, dimension=None, normal_vector=None, constant_term=None):
+        """Initialize line object.
+
+                Args:
+                    for a linear equation Ax + By + Cz + ... = k
+                    dimension: num of variables on the left side of linear equation.
+                    normal_vector: [A, B, C, ...], the vector orthogonal to direction vector.
+                    constant_term: k,constant appears at right side of linear equation.
+
+                Raises:
+                    Exception: thrown when dimension and normal_vector are both None
+                    """
         if not dimension and not normal_vector:
             raise Exception(self.EITHER_DIM_OR_NORMAL_VEC_MUST_BE_PROVIDED_MSG)
 
@@ -36,6 +43,15 @@ class Hyperplane(object):
         self.set_basepoint()
 
     def set_basepoint(self):
+        """Compute and set base point of self.
+
+                Raises:
+                    Exception:
+                        if catch Exception with msg 'No nonzero elements found'
+                           set base point to None
+                        else
+                            Throws caught Exception
+                    """
         try:
             n = self.normal_vector
             c = self.constant_term
@@ -54,6 +70,7 @@ class Hyperplane(object):
                 raise e
 
     def is_parallel_to(self, p):
+        """Returns whether self is parallel to p."""
         n1 = self.normal_vector
         n2 = p.normal_vector
 

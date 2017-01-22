@@ -11,6 +11,13 @@ class Line(object):
     NO_NONZERO_ELTS_FOUND_MSG = 'No nonzero elements found'
 
     def __init__(self, normal_vector=None, constant_term=None):
+        """Initialize line object.
+
+                Args:
+                    for a linear equation Ax + By = k
+                    normal_vector: [A, B], the vector orthogonal to direction vector.
+                    constant_term: k,constant appears at right side of linear equation.
+                    """
         self.dimension = 2
 
         if not normal_vector:
@@ -25,6 +32,15 @@ class Line(object):
         self.set_basepoint()
 
     def set_basepoint(self):
+        """Compute and set base point of self.
+
+                Raises:
+                    Exception:
+                        if catch Exception with msg 'No nonzero elements found'
+                           set base point to None
+                        else
+                            Throws caught Exception
+                    """
         try:
             n = self.normal_vector
             c = self.constant_term
@@ -43,12 +59,20 @@ class Line(object):
                 raise e
 
     def is_parallel_to(self, ell):
+        """Returns whether self is parallel to ell."""
         n1 = self.normal_vector
         n2 = ell.normal_vector
 
         return n1.is_parallel_to(n2)
 
     def intersection_with(self, ell):
+        """Returns a Vector representing intersection point of self and ell.
+
+                Returns:
+                    if self and ell are same -> self
+                    if self and ell are parallel -> None
+                    if self and ell intersects -> a Vector representing intersection point.
+                    """
         try:
             A, B = self.normal_vector.coordinates
             C, D = ell.normal_vector.coordinates
