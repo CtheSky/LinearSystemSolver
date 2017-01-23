@@ -110,3 +110,11 @@ solution.direction_vectors  # [Vector(Decimal(-2), Decimal(-1), Decimal(1))]
 ```
 #### Line and Plane
 Line are Plane are just hyperplane with fixed dimension, somehow redundant, see more in documentation.
+
+
+# Documentation
+See docstrings in each file.
+
+# Test
+All tests are under test folder and written in unit testing framework `unittest`, 
+see more in its [documentation](https://docs.python.org/2/library/unittest.html).
